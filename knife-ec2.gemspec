@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.name        = "knife-ec2"
   s.version     = Knife::Ec2::VERSION
   s.has_rdoc = true
-  s.authors     = ["Adam Jacob","Seth Chisamore"]
-  s.email       = ["adam@opscode.com","schisamo@opscode.com"]
+  s.authors     = ["Adam Jacob","Seth Chisamore", "Alex Ethier"]
+  s.email       = ["adam@opscode.com","schisamo@opscode.com", "alex@messagebus.com"]
   s.homepage = "http://wiki.opscode.com/display/chef"
   s.summary = "EC2 Support for Chef's Knife Command"
   s.description = s.summary
@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.add_dependency "fog", "~> 1.3"
+  s.add_dependency "fog", "~> 1.3.1"
   s.add_dependency "chef", "~> 0.10"
   s.require_paths = ["lib"]
 end
