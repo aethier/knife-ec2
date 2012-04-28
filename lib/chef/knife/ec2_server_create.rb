@@ -37,18 +37,18 @@ class Chef
 
       attr_accessor :initial_sleep_delay
 
-      option :flavor,
+      option :aws_flavor,
         :short => "-f FLAVOR",
         :long => "--flavor FLAVOR",
         :description => "The flavor of server (m1.small, m1.medium, etc)",
-        :proc => Proc.new { |f| Chef::Config[:knife][:flavor] = f },
+        :proc => Proc.new { |f| Chef::Config[:knife][:aws_flavor] = f },
         :default => "m1.small"
 
-      option :image,
+      option :aws_image,
         :short => "-I IMAGE",
         :long => "--image IMAGE",
         :description => "The AMI for the server",
-        :proc => Proc.new { |i| Chef::Config[:knife][:image] = i }
+        :proc => Proc.new { |i| Chef::Config[:knife][:aws_image] = i }
 
       option :security_groups,
         :short => "-G X,Y,Z",
@@ -57,12 +57,12 @@ class Chef
         :default => ["default"],
         :proc => Proc.new { |groups| groups.split(',') }
 
-      option :availability_zone,
+      option :aws_availability_zone,
         :short => "-Z ZONE",
         :long => "--availability-zone ZONE",
         :description => "The Availability Zone",
         :default => "us-east-1b",
-        :proc => Proc.new { |key| Chef::Config[:knife][:availability_zone] = key }
+        :proc => Proc.new { |key| Chef::Config[:knife][:aws_availability_zone] = key }
 
       option :chef_node_name,
         :short => "-N NAME",
@@ -114,10 +114,10 @@ class Chef
         :proc => Proc.new { |d| Chef::Config[:knife][:distro] = d },
         :default => "ubuntu10.04-gems"
 
-      option :template_file,
+      option :aws_template_file,
         :long => "--template-file TEMPLATE",
         :description => "Full path to location of template to use",
-        :proc => Proc.new { |t| Chef::Config[:knife][:template_file] = t },
+        :proc => Proc.new { |t| Chef::Config[:knife][:aws_template_file] = t },
         :default => false
 
       option :ebs_size,
@@ -277,7 +277,7 @@ class Chef
         bootstrap.config[:bootstrap_version] = locate_config_value(:bootstrap_version)
         bootstrap.config[:distro] = locate_config_value(:distro)
         bootstrap.config[:use_sudo] = true unless config[:ssh_user] == 'root'
-        bootstrap.config[:template_file] = locate_config_value(:template_file)
+        bootstrap.config[:aws_template_file] = locate_config_value(:aws_template_file)
         bootstrap.config[:environment] = config[:environment]
         # may be needed for vpc_mode
         bootstrap.config[:no_host_key_verify] = config[:no_host_key_verify]
@@ -291,12 +291,12 @@ class Chef
       end
 
       def ami
-        @ami ||= connection.images.get(locate_config_value(:image))
+        @ami ||= connection.images.get(locate_config_value(:aws_image))
       end
 
       def validate!
 
-        super([:image, :aws_ssh_key_id, :aws_access_key_id, :aws_secret_access_key])
+        super([:aws_image, :aws_ssh_key_id, :aws_access_key_id, :aws_secret_access_key])
 
         if ami.nil?
           ui.error("You have not provided a valid image (AMI) value.  Please note the short option for this value recently changed from '-i' to '-I'.")
@@ -306,11 +306,11 @@ class Chef
 
       def create_server_def
         server_def = {
-          :image_id => locate_config_value(:image),
-          :groups => config[:security_groups],
-          :flavor_id => locate_config_value(:flavor),
+          :image_id => locate_config_value(:aws_image),
+          :groups => config[:aws_security_groups],
+          :flavor_id => locate_config_value(:aws_flavor),
           :key_name => Chef::Config[:knife][:aws_ssh_key_id],
-          :availability_zone => locate_config_value(:availability_zone)
+          :availability_zone => locate_config_value(:aws_availability_zone)
         }
         server_def[:subnet_id] = config[:subnet_id] if config[:subnet_id]
 
