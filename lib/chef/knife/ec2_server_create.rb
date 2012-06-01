@@ -50,7 +50,7 @@ class Chef
         :description => "The AMI for the server",
         :proc => Proc.new { |i| Chef::Config[:knife][:aws_image] = i }
 
-      option :security_groups,
+      option :aws_security_groups,
         :short => "-G X,Y,Z",
         :long => "--groups X,Y,Z",
         :description => "The security groups for this server",
