@@ -57,7 +57,7 @@ class Chef
         :default => ["default"],
         :proc => Proc.new { |groups| groups.split(',') }
 
-      option :tags,
+      option :aws_tags,
         :short => "-T T=V[,T=V,...]",
         :long => "--tags Tag=Value[,Tag=Value...]",
         :description => "The tags for this server",
@@ -325,7 +325,7 @@ class Chef
       end
 
       def tags
-       tags = locate_config_value(:tags)
+       tags = locate_config_value(:aws_tags)
         if !tags.nil? and tags.length != tags.to_s.count('=')
           ui.error("Tags should be entered in a key = value pair")
           exit 1
